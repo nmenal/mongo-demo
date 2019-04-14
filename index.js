@@ -5,7 +5,7 @@ mongoose.connect('mongodb://localhost/playground')
     .catch(err => console.error('Could not connect to MongoDB ..',err));
 
 const courseSchema =  new mongoose.Schema({
-    name : String,
+    name : {type: String , required:true} ,
     author : String,
     tags : [String],
     date : { type: Date, default: Date.now},
@@ -22,12 +22,16 @@ async function createCourse() {
         tags: ['angular', 'frontend'],
         isPublished: false
     })
-
-    const result = await course.save();
-    console.log(result);
+    try {
+        await course.validate();
+        const result = await course.save();
+        console.log(result);
+    } catch (error) {
+        console.log(error.message);
+    }
 }
 
-// createCourse();
+createCourse();
 
 //build queries 
 // async function getCourses() {
@@ -42,15 +46,4 @@ async function createCourse() {
 
 // getCourses();
 
-async function updateCourse(id) {
-    const course = await Course.findById('5cac7f51bd934656ab5730b8'); 
-    console.log(course)
-    if (!course) return;
-    // course.set({ isPublished: true, author : "Manel Lahbib"});
-    // course.save();
-
-    // const result = await course.save();
-    // console.log(result);
-}
-
-updateCourse('5cac7f51bd934656ab5730b8');
+// updateCourse('5cac7f51bd934656ab5730b8');
